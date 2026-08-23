@@ -1,0 +1,7 @@
+services:
+  api:
+    build: .
+    image: complaint-project:0.1
+    container_name: api
+    ports: 
+      - 8000:8000

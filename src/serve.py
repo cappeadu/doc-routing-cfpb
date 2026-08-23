@@ -8,7 +8,7 @@ from src.config import nlp
 from src.evaluate import get_all_metrics
 from src.predict import TFIDFPredictor, predict_with_proba
 
-CHECKPOINT = "../models/artifacts.joblib"
+CHECKPOINT = "models/artifacts.joblib"
 
 
 @asynccontextmanager
