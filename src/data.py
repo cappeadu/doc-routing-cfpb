@@ -30,25 +30,24 @@ def clean_text(text: str, stopwords: set = STOPWORDS) -> str:
         stopwords (set): Used to filter stop words. Defaults to STOPWORDS.
 
     Returns:
-        str: the clean text.
+        str: the cleaned text.
     """
     text = text.lower()
-    text = " ".join(
-        [token for token in text.split() if token not in stopwords]
-    )  # removing stop words
-    text = re.sub(
-        r"([!\"'#$%&()*\+,-./:;<=>?@\\\[\]^_`{|}~])", r" \1 ", text
-    )  # removing punctuations
-    text = re.sub("[^A-Za-z]+", " ", text)  # remove non-alphanumeric characters
+    # filtering out stop words
+    text = " ".join([token for token in text.split() if token not in stopwords])
+    # remove punctuations
+    text = re.sub(r"([!\"'#$%&()*\+,-./:;<=>?@\\\[\]^_`{|}~])", r" \1 ", text)
+    # remove non-alphanumeric and numeric characters
+    text = re.sub("[^A-Za-z]+", " ", text)
     pattern = re.compile(r"(xx+\s*)+")  # remove repeated XXXX characters
-    text = pattern.sub(" mask ", text)  # rename repeated XXXX characters to mask
+    text = pattern.sub(" mask ", text)  # rename repeated XXXX characters to 'mask'
     text = re.sub(" +", " ", text).strip()  # remove repeated spaces
     text = re.sub(r"http\S+", "", text)  # remove hyperlinks
     return text
 
 
 def lemmatize_text(df: pd.DataFrame) -> list[str]:
-    """Lemmatize words in texts.
+    """Lemmatize words in text.
 
     Args:
         df (pd.DataFrame): Dataset to be lemmatized.
@@ -67,7 +66,7 @@ def lemmatize_text(df: pd.DataFrame) -> list[str]:
 
 
 def preprocess_dataset(dataframe: pd.DataFrame, class_to_idx: dict) -> pd.DataFrame:
-    """Preprocess.
+    """Preprocess dataset.
 
     Args:
         dataframe (pd.DataFrame): Dataset to prepocess.
@@ -88,16 +87,14 @@ def preprocess_dataset(dataframe: pd.DataFrame, class_to_idx: dict) -> pd.DataFr
 
 
 # Uses the preprocess_dataset function
-
-
 class CustomPreprocessor(BaseEstimator, TransformerMixin):
     """Custom preprocessor class"""
 
     def fit(self, df: pd.DataFrame):
-        tags = sorted(df["labels"].unique())
+        tags = sorted(df["labels"].unique())  # sort tag names for reproducibility
         self.class_to_idx = {label: idx for idx, label in enumerate(tags)}
         self.idx_to_class = {value: key for key, value in self.class_to_idx.items()}
         return self
 
-    def transform(self, df, y=None):
+    def transform(self, df: pd.DataFrame, y=None):
         return preprocess_dataset(df, class_to_idx=self.class_to_idx)

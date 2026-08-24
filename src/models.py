@@ -1,17 +1,23 @@
+import os
 import time
 from pathlib import Path
 
 import joblib
+import mlflow
 import pandas as pd
+from dotenv import load_dotenv
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.linear_model import LogisticRegression
 from sklearn.metrics import accuracy_score, f1_score, precision_recall_fscore_support
 
-from src.config import mlflow
 from src.data import CustomPreprocessor
+
+load_dotenv()
 
 
 class TFIDFTrainer:
+    """Class to train Logistic Model using TD-IDF vectors"""
+
     def __init__(
         self,
         model: LogisticRegression,
@@ -41,12 +47,16 @@ class TFIDFTrainer:
         self.experiment_name = experiment_name
         self.log_experiment = log_experiment
 
+    # preprocess dataset
     def preprocess(self):
         dataset = self.preprocessor.fit_transform(self.train_dataset)
         dataset["text_length"] = dataset.text.apply(lambda x: len(x.split()))
-        short_complaints = dataset["text_length"] <= 3
+        short_complaints = (
+            dataset["text_length"] <= 3
+        )  # train only examples with >3 words
         return dataset[~short_complaints]
 
+    # save trained artifacts
     def save_artifacts(self, preprocessor, vectorizer, model):
         artifacts = {
             "model": model,
@@ -58,8 +68,9 @@ class TFIDFTrainer:
             artifacts_path.mkdir(parents=True)
         joblib.dump(artifacts, artifacts_path / "artifacts.joblib")
 
+    # to track experiment
     def mlflow_logging(self, train_vectors, train_labels):
-        mlflow.set_tracking_uri("http://127.0.0.1:5000")
+        mlflow.set_tracking_uri(os.environ.get("ML_FLOW_TRACKING_URI"))
         mlflow.set_experiment(self.experiment_name)
 
         with mlflow.start_run():
@@ -94,6 +105,7 @@ class TFIDFTrainer:
             if self.params != None:
                 mlflow.log_params(self.params)
 
+    # train function to perform training
     def train(self):
         start = time.time()
         preprocessed_dataset = self.preprocess()
@@ -118,3 +130,4 @@ class TFIDFTrainer:
         end = time.time()
         total_time = end - start
         print(f"Total training time {total_time:.2f} secs")
+        return self.model

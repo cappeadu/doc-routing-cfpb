@@ -1,8 +1,6 @@
 import datetime
-import json
 import time
 from collections import OrderedDict
-from pathlib import Path
 from typing import Annotated
 
 import numpy as np
@@ -11,6 +9,7 @@ from sklearn.metrics import accuracy_score, f1_score, precision_recall_fscore_su
 
 from src.data import lemmatize_text, load_dataset
 from src.predict import TFIDFPredictor
+from src.utils import save_dict
 
 app = typer.Typer()
 
@@ -70,14 +69,14 @@ def per_class_metrics(y_true: np.array, y_pred: np.array, class_to_idx: dict) ->
 
 
 @app.command()
-def get_all_metrics(
+def evaluate(
     dataset_loc: Annotated[
         str, typer.Option(help="location of dataset for evaluation.")
     ],
     checkpoint: Annotated[str, typer.Option(help="location of checkpoint.")],
     results_dir: Annotated[
         str, typer.Option(help="location to save metrics after evals.")
-    ] = None,
+    ] = "results",
 ) -> dict:
     """Get all metrics for dataset.
 
@@ -108,12 +107,10 @@ def get_all_metrics(
     }
 
     if results_dir:
-        dir_path = Path(__file__).parent.parent / results_dir
-        if not dir_path.exists():
-            dir_path.mkdir(exist_ok=True)
-        with open(f"{dir_path}/evaluation_results.json", "w") as fp:
-            json.dump(metrics, fp=fp, indent=2)
-            fp.write("\n")
+        save_dict(
+            directory=results_dir,
+            dict_to_save=metrics,
+        )
 
     return metrics
 

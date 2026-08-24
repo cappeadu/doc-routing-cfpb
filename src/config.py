@@ -1,9 +1,11 @@
-# import mlflow
 import spacy
 
+# Load spacy and enbale pipelines to use lemmatizer
 nlp = spacy.load(
     "en_core_web_sm", enable=["tok2vec", "lemmatizer", "tagger", "attribute_ruler"]
 )
+
+# Used to filter stop words
 STOPWORDS = {
     "'d",
     "'ll",

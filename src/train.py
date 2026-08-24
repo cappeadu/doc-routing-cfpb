@@ -22,7 +22,9 @@ def train_model(
         str, typer.Option(help="parameters for TF-IDF vectorizer.")
     ],
     experiment_name: Annotated[str, typer.Option(help="name of MLFLOW experiment.")],
-    directory: Annotated[str, typer.Option(help="directory to save models.")],
+    directory_to_save_model: Annotated[
+        str, typer.Option(help="directory to save models.")
+    ],
     log_experiment: Annotated[
         bool, typer.Option(help="log experiment with MLFLOW")
     ] = True,
@@ -36,7 +38,6 @@ def train_model(
         vectorizer_params (dict): parameters for TF-IDF vectorizer.
         experiment_name (str): name of MLFLOW experiment.
         directory (str): directory to save models.
-        model: Logistic model for training.
         log_experiment (bool): log experiment with MLFLOW. Defaults to True.
 
     Returns:
@@ -61,7 +62,7 @@ def train_model(
         vectorizer=TfidfVectorizer,
         train_dataset=train_df_copied,
         val_dataset=val_df_copied,
-        directory=directory,
+        directory=directory_to_save_model,
         vectorizer_params=vectorizer_params,
         params=model_params,
         log_experiment=log_experiment,
