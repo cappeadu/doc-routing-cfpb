@@ -1,4 +1,61 @@
+import logging
+from logging.handlers import RotatingFileHandler
+from pathlib import Path
+
 import spacy
+
+ROOT_DIR = Path(__name__).parent.parent.resolve()
+LOGS_DIR = ROOT_DIR / "logs"
+LOGS_DIR.mkdir(parents=True, exist_ok=True)
+
+
+# 1. set up logger
+logger = logging.getLogger(name="cfpb")
+logger.setLevel(logging.DEBUG)
+
+
+# for console logger only
+def show_debug_only(example):
+    return example.levelname == "DEBUG"
+
+
+# formatter
+formatter = logging.Formatter(
+    fmt="{levelname} - {asctime} - [{name}:{filename}:{funcName}:{lineno}\n{message}\n]",
+    style="{",
+    datefmt="%Y-%m-%d %H:%M",
+)
+
+# console handler
+console_handler = logging.StreamHandler()
+console_handler.setLevel(logging.DEBUG)
+console_handler.setFormatter(formatter)
+logger.addHandler(console_handler)
+console_handler.addFilter(show_debug_only)
+
+# filehandler
+info_file_handler = RotatingFileHandler(
+    LOGS_DIR / "info.log",
+    mode="a",
+    maxBytes=10 * 1024 * 1024,  # 10MB
+    backupCount=10,
+    encoding="utf-8",
+)
+info_file_handler.setLevel(logging.INFO)
+info_file_handler.setFormatter(formatter)
+logger.addHandler(info_file_handler)
+
+error_file_handler = RotatingFileHandler(
+    LOGS_DIR / "error.log",
+    mode="a",
+    maxBytes=10 * 1024 * 1024,  # 10MB
+    backupCount=10,
+    encoding="utf-8",
+)
+error_file_handler.setLevel(logging.ERROR)
+error_file_handler.setFormatter(formatter)
+logger.addHandler(error_file_handler)
+
 
 # Load spacy and enbale pipelines to use lemmatizer
 nlp = spacy.load(

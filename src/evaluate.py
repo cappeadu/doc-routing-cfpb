@@ -1,4 +1,5 @@
 import datetime
+import json
 import time
 from collections import OrderedDict
 from typing import Annotated
@@ -7,6 +8,7 @@ import numpy as np
 import typer
 from sklearn.metrics import accuracy_score, f1_score, precision_recall_fscore_support
 
+from src.config import logger
 from src.data import lemmatize_text, load_dataset
 from src.predict import TFIDFPredictor
 from src.utils import save_dict
@@ -105,6 +107,7 @@ def evaluate(
             y_true=y_true, y_pred=y_pred, class_to_idx=class_to_idx
         ),
     }
+    logger.info(json.dumps(metrics, indent=2))
 
     if results_dir:
         save_dict(

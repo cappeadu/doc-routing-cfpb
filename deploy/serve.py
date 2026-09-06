@@ -9,15 +9,18 @@ from pydantic import BaseModel
 from src.config import nlp
 from src.evaluate import evaluate
 from src.predict import TFIDFPredictor, predict_with_proba
+from src_bert.predict import BERTPredictor, predict_with_proba_bert
 from src_embeddings.predict import EmbeddingsPredictor, predict_with_proba_embeddings
 
 CHECKPOINT_TFIDF = "models/artifacts.joblib"
 CHECKPOINT_EMBEDDINGS = "models/embeddings_model.joblib"
+CHECKPOINT_BERT = "appcle/distilbert-base-uncased-cfpd"
 
 
 class ModelChoice(str, Enum):
     tfidf = "tfidf"
     embeddings = "embeddings"
+    bert = "bert"
 
 
 class Complaint(BaseModel):
@@ -30,6 +33,7 @@ async def lifespan(app: FastAPI):
     app.state.embeddings_predictor = EmbeddingsPredictor.from_checkpoint(
         CHECKPOINT_EMBEDDINGS
     )
+    app.state.bert = BERTPredictor(CHECKPOINT_BERT)
     yield
 
 
@@ -53,7 +57,10 @@ def healthcheck():
 
 @app.post("/predict")
 async def predict_(
-    complaint: Complaint, request: Request, model: ModelChoice = ModelChoice.tfidf
+    complaint: Complaint,
+    request: Request,
+    model: ModelChoice = ModelChoice.tfidf,
+    threshold: float = 0.7,
 ):
     if model.value == "tfidf":
         sentence = " ".join([token.lemma_ for token in nlp(complaint.text)])
@@ -61,14 +68,20 @@ async def predict_(
             {"complaint_what_happened": [complaint.text], "text": [sentence]}
         )
         predictor = request.app.state.tfidf_predictor
-        results = predict_with_proba(df, predictor)
+        results = predict_with_proba(df, predictor, threshold)
 
     elif model.value == "embeddings":
         class_to_idx = request.app.state.tfidf_predictor.preprocessor.class_to_idx
         predictor = request.app.state.embeddings_predictor
         results = predict_with_proba_embeddings(
-            complaint.text, predictor, list(class_to_idx)
+            complaint.text, predictor, list(class_to_idx), threshold
         )
+    elif model.value == "bert":
+        predictor = request.app.state.bert
+        results = predict_with_proba_bert(
+            complaint.text, predictor=predictor, threshold=threshold
+        )
+
     else:
         raise HTTPException(status_code=404, detail="Unknown Model")
 

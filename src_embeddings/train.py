@@ -1,8 +1,10 @@
+import datetime
 import json
 from typing import Annotated
 
 import typer
 
+from src.config import logger
 from src_embeddings.data import load_dataset
 from src_embeddings.models import EmbeddingsClassifier, LogisticRegression
 
@@ -50,8 +52,14 @@ def train_model(
         log_experiment=log_experiment,
         experiment_name=experiment_name,
     )
+    model_artifact = trainer.train()
+    logs = {
+        "timestamp": datetime.datetime.now().strftime("%B %d, %Y %I:%M:%S %p"),
+        "experiment_name": experiment_name,
+    }
+    logger.info(json.dumps(logs, indent=2))
 
-    return trainer.train()
+    return model_artifact
 
 
 if __name__ == "__main__":
