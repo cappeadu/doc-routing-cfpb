@@ -383,7 +383,6 @@ uvicorn deploy.serve:app
 Once the app is running you can use it via Python. eg:
 ```python
 import requests
-import json
 text = "I do not recognize a charge on my credit card."
 params = {"model":"tfidf"} # select different model eg "bert" or "embeddings"
 response = requests.post("http://127.0.0.1:8000/predict", params=params, json={"text":text}).json()
@@ -461,7 +460,7 @@ http://localhost:8000/docs
 ### 1. Clone the repository
 
 ```bash
-git clone <repository-url>
+git clone https://github.com/cappeadu/doc-routing-cfpb.git
 cd complaint-project
 ```
 
