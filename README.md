@@ -556,7 +556,7 @@ The model comparison is therefore based on both overall performance and class-le
 ### **Evaluation using TF-IDF**
 
 ```pwsh
-$dataset_loc="C:\Users\Lenovo\code\complaint-project\datasets\val.csv"
+$dataset_loc="https://raw.githubusercontent.com/cappeadu/doc-routing-cfpb/refs/heads/dev/dataset/val.csv"
 $checkpoint='C:\Users\Lenovo\code\complaint-project\models\artifacts.joblib'
 
 python -m src.evaluate `                                
