@@ -180,6 +180,7 @@ complaint-project/
 ├── notebooks/
 │   ├── download_dataset.ipynb
 │   ├── explore_data.ipynb
+│   ├── fine_tune_bert_COLAB.ipynb
 │   ├── get_embeddings.ipynb
 │   ├── training_embeddings.ipynb
 │   └── training_tfid.ipynb
