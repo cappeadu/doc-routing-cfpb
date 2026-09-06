@@ -91,7 +91,7 @@ async def predict_(
 @app.post("/evaluate/")
 async def evaluate_(
     dataset_location: str,
-    results_dir: str = "results",
+    results_dir: None,
     checkpoint: str = CHECKPOINT_TFIDF,
 ):
     results = evaluate(
