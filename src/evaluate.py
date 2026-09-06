@@ -78,7 +78,7 @@ def evaluate(
     checkpoint: Annotated[str, typer.Option(help="location of checkpoint.")],
     results_dir: Annotated[
         str, typer.Option(help="location to save metrics after evals.")
-    ] = None,
+    ] = "results_dir",
 ) -> dict:
     """Get all metrics for dataset.
 

@@ -129,7 +129,7 @@ For the routing task, the original categories are consolidated into a smaller se
 
 The raw dataset is **not included in the Git repository**.
 
-The project notebook contains the data acquisition (download_datset.ipynb) and preparation steps and data splits (explore_data.ipynb) required to obtain the dataset and reproduce the training workflow.
+The project notebook contains the data acquisition (download_datset.ipynb) and preparation steps and data splits (explore_data.ipynb) required to obtain the dataset and reproduce the training workflow. Embeddings data (.npy) can be obtained by running get_embeddings.ipynb locally or on Google COLAB and saving the numpy object.
 
 This keeps the repository lightweight while allowing the dataset to be retrieved directly from its source.
 
@@ -259,7 +259,7 @@ python -m src.train `
 
 ```pwsh
 $train_data_loc="C:\Users\Lenovo\code\complaint-project\datasets\train_embeddings.npy"
-$val_data_loc_tdif="C:\Users\Lenovo\code\complaint-project\datasets\val_embeddings.npy"
+$val_data_loc="C:\Users\Lenovo\code\complaint-project\datasets\val_embeddings.npy"
 $model_params='{"random_state":42, "max_iter":1000}'
 $experiment_name="doc_routing"
 $directory_name="models"
@@ -561,7 +561,7 @@ $dataset_loc="C:\Users\Lenovo\code\complaint-project\datasets\val.csv"
 $checkpoint='C:\Users\Lenovo\code\complaint-project\models\artifacts.joblib'
 
 python -m src.evaluate `                                
->> --dataset_loc $dataset_loc `
+>> --dataset-loc $dataset_loc `
 >> --checkpoint $checkpoint
 ```
 

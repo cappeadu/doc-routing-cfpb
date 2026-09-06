@@ -77,7 +77,6 @@ with tab2:
         value="datasets/val.csv",
         help="Path to the CSV the API should evaluate against.",
     )
-    results_dir = st.text_input("Results directory", value="results")
     checkpoint = st.text_input(
         "Checkpoint path",
         value="models/artifacts.joblib",
@@ -93,7 +92,6 @@ with tab2:
                     EVALUATE_URL,
                     params={
                         "dataset_location": dataset_location,
-                        "results_dir": results_dir,
                         "checkpoint": checkpoint,
                     },
                     timeout=600,
