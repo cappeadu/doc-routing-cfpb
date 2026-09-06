@@ -1,3 +1,4 @@
 # ignore .env file
 .env
 __pycache__
+.vscode
