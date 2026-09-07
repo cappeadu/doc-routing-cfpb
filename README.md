@@ -642,7 +642,7 @@ The comparison provides a practical view of the trade-offs between model complex
 The application is packaged as a Docker container and can be deployed to a cloud hosting platform.
 
 ```text
-NB: To deploy and use all three (3) models locally, uncomment the codes in deploy/serve.py. 
+NB: To deploy and use all three (3) models locally, uncomment the codes in deploy/serve.py
 The codes were commented so that only the light-weight model (TF-IDF) was deployed using free resources on Render.
 ```
 
