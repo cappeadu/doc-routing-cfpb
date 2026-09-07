@@ -170,7 +170,9 @@ The exact preprocessing differs depending on the modelling approach.
 ```text
 complaint-project/
 │
-├── datasets/
+├── dataset/
+│   ├── val_sample.csv
+│   └── val.csv
 │
 ├── deploy/
 │   └── serve.py
@@ -184,6 +186,7 @@ complaint-project/
 │   ├── explore_data.ipynb
 │   ├── fine_tune_bert_COLAB.ipynb
 │   ├── get_embeddings.ipynb
+│   ├── get_val_sample.ipynb
 │   ├── training_embeddings.ipynb
 │   └── training_tfid.ipynb
 │
@@ -558,7 +561,7 @@ The model comparison is therefore based on both overall performance and class-le
 ### **Evaluation using TF-IDF**
 
 ```pwsh
-$dataset_loc="https://raw.githubusercontent.com/cappeadu/doc-routing-cfpb/refs/heads/dev/dataset/val.csv"
+$dataset_loc="https://raw.githubusercontent.com/cappeadu/doc-routing-cfpb/refs/heads/master/dataset/val_sample.csv"
 $checkpoint='C:\Users\Lenovo\code\complaint-project\models\artifacts.joblib'
 
 python -m src.evaluate `                                
@@ -638,6 +641,11 @@ The comparison provides a practical view of the trade-offs between model complex
 
 The application is packaged as a Docker container and can be deployed to a cloud hosting platform.
 
+```text
+NB: To deploy and use all three (3) models locally, uncomment the codes in deploy/serve.py. 
+The codes were commented so that only the light-weight model (TF-IDF) was deployed using free resources on Render.
+```
+
 ---
 
 ## Limitations
@@ -701,4 +709,4 @@ Potential extensions include:
 
 The application has been containerized and tested locally with all three classification approaches.
 
-The next stage is cloud deployment and further production-oriented improvements such as automated testing, monitoring, and model/version management.
+The next stage further production-oriented improvements such as automated testing, monitoring, and model/version management.
