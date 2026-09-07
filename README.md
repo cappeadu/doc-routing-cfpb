@@ -1,5 +1,7 @@
 # CFPB Complaint Routing API
 
+**Live Demo:** [Streamlit App](https://doc-routing-cfpb.streamlit.app/)
+
 A text classification system for automatically routing Consumer Financial Protection Bureau (CFPB) consumer complaints to the appropriate financial product or service category.
 
 The project compares three approaches to text classification and exposes them through a FastAPI application:
