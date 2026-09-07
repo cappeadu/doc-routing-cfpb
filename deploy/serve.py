@@ -6,15 +6,15 @@ import pandas as pd
 from fastapi import FastAPI, HTTPException, Request
 from pydantic import BaseModel
 
-from src.config import nlp
 from src.evaluate import evaluate
 from src.predict import TFIDFPredictor, predict_with_proba
-from src_bert.predict import BERTPredictor, predict_with_proba_bert
-from src_embeddings.predict import EmbeddingsPredictor, predict_with_proba_embeddings
+
+# from src_bert.predict import BERTPredictor, predict_with_proba_bert
+# from src_embeddings.predict import EmbeddingsPredictor, predict_with_proba_embeddings
 
 CHECKPOINT_TFIDF = "models/artifacts.joblib"
-CHECKPOINT_EMBEDDINGS = "models/embeddings_model.joblib"
-CHECKPOINT_BERT = "appcle/distilbert-base-uncased-cfpd"
+# CHECKPOINT_EMBEDDINGS = "models/embeddings_model.joblib"
+# CHECKPOINT_BERT = "appcle/distilbert-base-uncased-cfpd"
 
 
 class ModelChoice(str, Enum):
@@ -29,11 +29,14 @@ class Complaint(BaseModel):
 
 @asynccontextmanager
 async def lifespan(app: FastAPI):
+    from src.config import nlp
+
+    app.state.nlp = nlp
     app.state.tfidf_predictor = TFIDFPredictor.from_checkpoint(CHECKPOINT_TFIDF)
-    app.state.embeddings_predictor = EmbeddingsPredictor.from_checkpoint(
-        CHECKPOINT_EMBEDDINGS
-    )
-    app.state.bert = BERTPredictor(CHECKPOINT_BERT)
+    # app.state.embeddings_predictor = EmbeddingsPredictor.from_checkpoint(
+    #    CHECKPOINT_EMBEDDINGS
+    # )
+    # app.state.bert = BERTPredictor(CHECKPOINT_BERT)
     yield
 
 
@@ -63,6 +66,7 @@ async def predict_(
     threshold: float = 0.7,
 ):
     if model.value == "tfidf":
+        nlp = app.state.nlp
         sentence = " ".join([token.lemma_ for token in nlp(complaint.text)])
         df = pd.DataFrame(
             {"complaint_what_happened": [complaint.text], "text": [sentence]}
@@ -71,15 +75,23 @@ async def predict_(
         results = predict_with_proba(df, predictor, threshold)
 
     elif model.value == "embeddings":
-        class_to_idx = request.app.state.tfidf_predictor.preprocessor.class_to_idx
-        predictor = request.app.state.embeddings_predictor
-        results = predict_with_proba_embeddings(
-            complaint.text, predictor, list(class_to_idx), threshold
+        # class_to_idx = request.app.state.tfidf_predictor.preprocessor.class_to_idx
+        # predictor = request.app.state.embeddings_predictor
+        # results = predict_with_proba_embeddings(
+        #    complaint.text, predictor, list(class_to_idx), threshold
+        # )
+        raise HTTPException(
+            status_code=503,
+            detail="Embeddings model is not enabled on the free deployment.",
         )
     elif model.value == "bert":
-        predictor = request.app.state.bert
-        results = predict_with_proba_bert(
-            complaint.text, predictor=predictor, threshold=threshold
+        # predictor = request.app.state.bert
+        # results = predict_with_proba_bert(
+        # complaint.text, predictor=predictor, threshold=threshold
+        # )
+        raise HTTPException(
+            status_code=503,
+            detail="BERT model is not enabled on the free deployment.",
         )
 
     else:

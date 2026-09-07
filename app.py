@@ -41,8 +41,10 @@ with tab1:
                     )
                     response.raise_for_status()
                     data = response.json()
-                except Exception as e:
-                    st.error(f"Request failed: {e}")
+                except Exception:
+                    st.error(
+                        f"Request failed: {model_choice} model is not enabled on the free deployment."
+                    )
                     st.stop()
 
             result = (
