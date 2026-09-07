@@ -76,7 +76,7 @@ with tab2:
 
     dataset_location = st.text_input(
         "Dataset location",
-        value="https://raw.githubusercontent.com/cappeadu/doc-routing-cfpb/refs/heads/master/dataset/val.csv",
+        value="https://raw.githubusercontent.com/cappeadu/doc-routing-cfpb/refs/heads/master/dataset/val_sample.csv",
         help="Path to the CSV the API should evaluate against.",
     )
     checkpoint = st.text_input(
