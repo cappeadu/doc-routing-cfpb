@@ -24,7 +24,13 @@ with tab1:
         height=150,
         placeholder="I do not recognize a charge on my credit card.",
     )
-    model_choice = st.selectbox("Model", ["tfidf", "embeddings", "bert"])
+    model_choice = st.selectbox(
+        "Model", ["tfidf", "embeddings (local only)", "bert (local only)"]
+    )
+    model_param = model_choice.split()[0]
+    st.caption(
+        "Only TF-IDF is live on this deployment — embeddings/BERT require running the API locally."
+    )
     submit = st.button("Predict")
 
     if submit:
